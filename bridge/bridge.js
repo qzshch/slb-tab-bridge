@@ -75,10 +75,10 @@ const httpServer = http.createServer((req, res) => {
 
       try {
         const result = await sendToExtension(cmd);
-        res.end(JSON.stringify(result));
+        return res.end(JSON.stringify(result));
       } catch (e) {
         res.statusCode = 504;
-        res.end(JSON.stringify({ ok: false, error: e.message }));
+        return res.end(JSON.stringify({ ok: false, error: e.message }));
       }
     }
 
