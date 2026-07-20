@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "SLBrowser Tab Bridge",
+  "version": "1.0.0",
+  "description": "让 Claude Code 通过 WebSocket 桥接操作浏览器标签页",
+  "permissions": ["tabs", "tabGroups", "alarms"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Tab Bridge"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

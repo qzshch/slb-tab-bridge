@@ -1,0 +1,14 @@
+{
+  "name": "slb-tab-bridge",
+  "version": "1.0.0",
+  "description": "WebSocket bridge between Claude Code and SLBrowser extension",
+  "main": "bridge.js",
+  "scripts": {
+    "start": "node bridge.js serve",
+    "query": "node bridge.js query",
+    "status": "node bridge.js status"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
