@@ -238,6 +238,25 @@ async function main() {
       break;
     }
 
+    case 'collect': {
+      const params = {};
+      const ipIdx = args.indexOf('--ip');
+      if (ipIdx !== -1 && args[ipIdx + 1]) {
+        params.urlPattern = args[ipIdx + 1];
+      }
+      const exIdx = args.indexOf('--exclude');
+      if (exIdx !== -1 && args[exIdx + 1]) {
+        params.excludePatterns = args[exIdx + 1].split(',');
+      }
+      const r = await cliRequest('POST', '/command', { action: 'collect', params });
+      if (r.ok) {
+        console.log(`Collected ${r.data.collected} tabs into window ${r.data.newWindowId} (closed ${r.data.closedOriginal} originals)`);
+      } else {
+        console.log(`Error: ${r.error}`);
+      }
+      break;
+    }
+
     default:
       console.log(`SLBrowser Tab Bridge
 

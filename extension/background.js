@@ -67,11 +67,12 @@ async function handleCommand(msg) {
   const { action, params = {} } = msg;
   try {
     switch (action) {
-      case 'query': return { ok: true, data: await cmdQuery(params) };
-      case 'close': return { ok: true, data: await cmdClose(params) };
-      case 'open':  return { ok: true, data: await cmdOpen(params) };
-      case 'group': return { ok: true, data: await cmdGroup(params) };
-      case 'ping':  return { ok: true, data: 'pong' };
+      case 'query':   return { ok: true, data: await cmdQuery(params) };
+      case 'close':   return { ok: true, data: await cmdClose(params) };
+      case 'open':    return { ok: true, data: await cmdOpen(params) };
+      case 'group':   return { ok: true, data: await cmdGroup(params) };
+      case 'collect': return { ok: true, data: await cmdCollect(params) };
+      case 'ping':    return { ok: true, data: 'pong' };
       default:      return { ok: false, error: `Unknown action: ${action}` };
     }
   } catch (e) {
@@ -142,6 +143,45 @@ async function cmdGroup({ tabIds, urlPattern, title } = {}) {
   } catch {
     return { grouped: 0, error: 'tabGroups not supported' };
   }
+}
+
+async function cmdCollect({ urlPattern, titlePattern, excludePatterns } = {}) {
+  // Find matching tabs
+  let tabs = await cmdQuery({ urlPattern, titlePattern });
+
+  // Apply exclusions
+  if (excludePatterns && excludePatterns.length) {
+    for (const ex of excludePatterns) {
+      const re = new RegExp(ex.replace(/\*/g, '.*'), 'i');
+      tabs = tabs.filter(t => !re.test(t.url) && !re.test(t.title));
+    }
+  }
+
+  if (!tabs.length) return { collected: 0 };
+
+  // Deduplicate by URL
+  const seen = new Set();
+  const unique = tabs.filter(t => {
+    const key = t.url.split('?')[0];
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const urls = unique.map(t => t.url);
+  const oldIds = tabs.map(t => t.id);
+
+  // Create new window with all URLs
+  const win = await chrome.windows.create({ url: urls, focused: true });
+
+  // Close original tabs
+  await chrome.tabs.remove(oldIds);
+
+  return {
+    collected: urls.length,
+    newWindowId: win.id,
+    closedOriginal: oldIds.length,
+  };
 }
 
 // --- Init ---
