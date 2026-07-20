@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Device Tab Manager",
+  "version": "1.0",
+  "description": "识别并管理内网设备标签",
+  "permissions": ["tabs", "tabGroups"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Device Tab Manager"
+  }
+}
