@@ -244,6 +244,10 @@ async function main() {
       if (ipIdx !== -1 && args[ipIdx + 1]) {
         params.urlPattern = args[ipIdx + 1];
       }
+      const titleIdx = args.indexOf('--title');
+      if (titleIdx !== -1 && args[titleIdx + 1]) {
+        params.titlePattern = args[titleIdx + 1];
+      }
       const exIdx = args.indexOf('--exclude');
       if (exIdx !== -1 && args[exIdx + 1]) {
         params.excludePatterns = args[exIdx + 1].split(',');
